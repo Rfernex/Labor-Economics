@@ -1,0 +1,17 @@
+Bibliography
+United States Census of Manufactures, Motor Vehicle Industry, 1929-1935
+
+This bibliography includes published and unpublished works that are related 
+to ICPSR study 35604. It includes works that are based on primary
+or secondary analysis of the data, or which describe or critique those
+data or the collection methodology. 
+
+If you publish a work or know of other works that are based on these data,
+please send the complete citation and name of the ICPSR study used to:
+icpsr-biblio-notify@umich.edu 
+
+
+1. Bresnahan, Timothy F.; Raff, Daniel M.G., "Intra-Industry heterogeneity
+and the Great Depression: The American motor vehicles industry, 1929-1935."
+Journal of Economic History. 1991, 51, (2), 317 - 331. DOI:
+10.1017/S0022050700038961

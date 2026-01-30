@@ -1,0 +1,1030 @@
+
+
+% DOCUMENT SETUP: Do not make any changes to this section.
+\documentclass[a4paper,10.5pt,twoside]{article}
+\hyphenpenalty=8000
+\textwidth=125mm
+\textheight=200mm
+\usepackage[top=2cm, bottom=2cm, inner=2cm, outer=2cm, includehead]{geometry}
+\usepackage{fancyhdr}
+\usepackage{threeparttable}
+\usepackage{placeins}
+\pagestyle{fancy}
+\fancyhead{}
+\usepackage{booktabs}
+\fancyfoot[C]{\thepage}
+\raggedbottom
+\usepackage{xurl}
+\usepackage{graphicx}
+\usepackage{alltt}
+\usepackage{amsmath}
+\usepackage[hidelinks, pdftex]{hyperref}
+\urlstyle{same}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{csquotes}
+\usepackage{indentfirst} 
+\usepackage[notes, backend=biber]{biblatex-chicago}
+\bibliography{references}
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\usepackage[english]{babel}
+\usepackage{listings}
+\usepackage{xcolor}
+\lstdefinestyle{code}{
+  basicstyle=\ttfamily\footnotesize,
+  numbers=left,
+  numberstyle=\tiny,
+  stepnumber=1,
+  numbersep=8pt,
+  frame=lines,
+  breaklines=true,
+  breakatwhitespace=true,
+  showstringspaces=false,
+  tabsize=2
+}
+% Minimal Stata language spec
+\lstdefinelanguage{Stata}{
+  morekeywords={reg, reghdfe, gen, egen, replace, foreach, forvalues, xtset, local, global, eststo, esttab, bootstrap, preserve, restore, merge, collapse, bysort, if, in, use, save, keep, drop, stute_test},
+  sensitive=true,
+  morecomment=[l]*,
+  morestring=[b]"
+}
+
+
+\begin{document}
+\pagenumbering{arabic}
+\fancyhead[RO]{Labor Economics Course, taught by Professor Pierre Cachuc}
+\begin{center}
+\LARGE
+\textbf{Replication Study for  "Labor Market Effects of Workweek Restrictions : Evidence from the Great Depression" by P.Fishback et al. }\\[12pt]
+\normalsize
+\textbf {Romain FERNEX\footnote{Sciences Po, MPhil in Economics} }\\[4pt]
+\end{center}
+
+% ABSTRACT AND KEYWORDS: Replace "Abstract text" with your abstract text of 100-200 words where noted below. Replace "keyword, keyword, keyword" with your 5-10 keywords, separated by commas, where noted below. 
+\begin{abstract}
+\normalsize
+The present essay is a replication study for the article "Labor Market Effects of Workweek Restrictions : Evidence from the Great Depression" by P.Fishback et al. The later contributes to the literature on the effects of Roosevelt era policies on the US labor market following the Great Recession of 1929 and expands on prior works related to the effects of work-sharing. It provides a nuanced picture of the effect of the "President's Reemployment Agreement" (PRA) of July 1933 on workweek length, employment and labor earnings. It notably describes positive effects on aggregate employment and in hourly earnings for firms above the workweek limit that are partly offset by general equilibrium effects. 
+This replication study describes the method employed by the authors in the above paper and provides additional robustness checks for some of its key results. The tests cover both the Taylor regression, the bunching design and Difference in Difference designs used by the authors to investigate employment, workweek and earning effects of the PRA reform. I make the point that while most of the results provided are robust to sensitivity tests, effects on weekly earnings and payroll should be qualified due to conflicting pre-trends. In an effort to test robustness at the establishment-level, I also attempt to provide an alternative definition of hourly earnings and find results of differing magnitude for PRA effects on  hourly and weekly earnings.  \vskip 2mm
+\textbf{Keywords:} Labour Markets, Work-Sharing, Economic History
+\end{abstract}
+
+
+\section{Introduction : relevant literature and historical context}\label{s:1}
+In the aftermath of the Great recession in 1929, average hours dropped significantly and unemployment peaked at above 25\%. This prompted the Roosevelt administration to discuss measures to bring back jobs and bolster labor earnings for existing workers. The first discussion of work-sharing related policies came as early as october 1932 with a Share-the-work committee under President Robert Hoover. The non-binding nature of this early attempt at reducing the workweek to combat rising unemployment greatly limited its impact and did not receive unanimous backing from civil society at the time. Real negotiations to implement a workweek limit only came in June 1933 within the scope of National Industry Recovery Act. It made the case for the creation of "Codes of Fair Competition" that would be decided within each industry and set up the framework for industry wide. This framework would include setting a clear maximum for weekly hours worked for each industry to incentivize work-sharing. Take up for this measure was initially very limited however as very few industries had submitted a proposal for such a code by the time the end of July hit. In Response, President Roosevelt implemented the President's Recovery Agreement (PRA) to boost the adoption of this measure. All firms that signed the agreement, and thus adhered to commit to staying at or below a given workweek limit (set at 35 or 40 hours for most industries) coud appose a Blue Eagle on their products and brand as a display of patriotism. 
+The goal of this measure was twofold : increase employment and raise labor earnings by pushing firms above the workweek limit to scale down weekly hours and increase worker's pay. The PRA campaign turned out to be massively successful, with a take up rate of close to 85 percent within the first 2 months \autocite{taylor2019deconstructing}. \\
+As a result weekly hours fell but employment kept rising, constituting a puzzle that modern economists took interest in. Eggertsson notably focused on the wage impact of the New Deal labor market policies as a whole including the NIRA\autocite{eggertsson2008great}. Taylor and Neumann extended this focus to include the impact of the workweek cap but primarily discussed wage evolutions \autocite{taylor2016recovery}. Thus, this paper adds to this literature on the New Deal Policy puzzle by (o) proposing an employment model to investigate the effect of introducing a workweek limit at equilibrium, (oo) estimating employment effects using a bunching design and 3) impact on hourly earnings based on a Difference in Difference design. Lastly, it enriches an earlier work by Taylor \autocite{taylor2011worksharing} dealing with the impact of the NRA and PRA on various labor market outcomes using a standard panel regression design.\\
+This replication study hopes to contribute additional elements by pointing out some potential issues in the findings of 
+
+\section{Description of the Paper}\label{s:2}
+The paper is split in eight main sections, including the introduction and conclusion. The authors begin by presenting the theoretical framework of the paper by proposing an extension to Bernanke's model on workweek, employment and earnings dynamics\autocite{bernanke1986employment}. This model aims at providing a rationale as to why weekly hours kept dropping after the reform while hourly earning remained at fairly high levels. Then they perform a wide range of empirical estimations using two different datasets, the Census of Manufacturers (COM) dataset and the Statistical Sectors of the National Recovery Administration (SSNRA) dataset. The former consists in empoyment and wage panel data at the establishment level that span year 1929 to 1935. The sample is restricted to 8 core industries for a total of 692000 recorded employment spells in january in january 1933. Workweek is computed as the ratio of total man-hours to total employees. In comparison, the SSNRA dataset is at the industry level and presents a wide array of sectors (115 in total), including outside manufacturing, and provides the authors with solid hourly earnings and payroll data for the targetted industries. While hourly earnings are not present directly in the COM dataset, later in this paper, I attempt to build a proxy of those earnings by computing hourly wages under a range of assumptions to try and get an establishment level view of effects on labor earnings.  
+
+
+\subsection{Theoretical Foundations : Employment Model}\label{s:2.1}
+The set-up of the model is a follows : firms and household interact with firms proposing a work contract, which presents itself as a bundle, composed of a given set of work hours and a fixed earnings level, guaranteeing a certain level of utility to the household. In other words, work hours and earnings can act as substitutes for employers in this economy. Households are free to accept or decline signing the contract based on their reservation utility which is drawn randomly from a probability distribution G and is kept as a private information. Besides, Households do not have the option to borrow or save. Firms differ in the elasticity of output to employment in their production function which is drawn from an exogenous distribution P. Firms are also considered to have constant return to scale and are assumed to be price takers. The model finds that firms are willing to hire employees up to the point where the marginal revenue from an additional employee equal its compensation package (earnings and work hours). \\
+The authors then consider the equilibrium without a workweek limit. They find that I have a pooling equilibrium where all firms offer a contract with the same utility $\bar{U}$ but with a different compensation package. As a result all households with a reservation utility superior to $\bar{U}$ do not participate in the labor market while all others participate. In this context, firms act as monopsonists leading to an inefficiently low level of employment as the firms are too reluctant to hire marginal worker to avoid having to adjust the earnings and workweek of its existing employees. Earnings also decline as firm reduce their workweek, due the substitutability between hour and earnings, for a fixed utility level.
+They then introduce a workweek limit to determine its impact on equilibrium choices. Once the workweek limit is implemented, aggregate output falls while both aggregate employment and the level of utility $\bar{U} $offered by firms rise. General equilibrium effects affects both earnings per hours, which rise as a result of the increase in $\bar{U}$, and the growth in employment demand which ends up being partly offset. 
+
+\subsection{Labor market effects of the PRA}\label{s:2.1}
+Turning to the empirical part of the paper, the authors begin by building on the work of Taylor \autocite{taylor2011worksharing} to provide a broad view of the impact of the PRA and NIRA on the following labor market outcomes : workweek (in hours), employment, man-hours, hourly earnings, weekly earnings and payroll. Their contribution here is twofold : the regression is run on the SSNRA dataset, which comprises a wider range of industries than the one considered in Taylors original design, and they control for control for month, year and industry fixed effects as well as for industrial production to net out the confounding effect of other aggregate shocks. The regression model is a follows : 
+\begin{equation}
+    logY_{mt}= \beta_1EPRA_{imt}+\beta_2ENRA_{imt}+\beta_3{CCPRA_{imt}}+\beta_4CCNRA_{imt}+Controls_{imt}+\epsilon_{imt}
+\end{equation}
+$ENRA_{imt}$ is a dummy for whether the NIRA code was in effect for industry $i$ in month $m$ of year $t$, for the period before the compliance crisis (january 1933 to april 1934). $EPRA_{imt}$ follows the same structure but for whether the PRA had been enacted. Lastly $CCPRA_{imt}$ and $CCNRA_{imt}$ function in the same way except for the period of the compliance crisis (april 1934 to may 1935)
+Controls correspond to the ones I described above. In our robustness checks I shall introduce an additional control for the state of the macroeconomy to ensure those results are indeed robust to variations in the broader economic conjuncture. Lastly, standard errors are clustered at the industry level which is also a parameter I shall touch upon in additional robustness checks. 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{Figures/Taylor.png}
+\end{figure}
+\FloatBarrier
+As can be seen in the above table, the authors report lower weekly hours and higher employment and hourly earnings in response to the implementation of the PRA and of the NIRA in the period that precedes the compliance crisis. These results hold during the compliance crisis which the author interpret as evidence that the compliance crisis mostly affected pricing and other parameters outsides of the outcomes that are of interest to this paper. It is worth noting that this model does not cleanly separate out the effects of the PRA and NIRA but provide evidence that both tend to have had a similar impact on labor market outcomes. Looking at earnings gives a nuanced picture of the impact of EPRA on earnings, notably during the compliance crisis. Indeed, while hourly earnings rose by 4.3\% in response to the PRA during the compliance crisis, weekly earnings actually dropped by 3\%. This is in line with the general equilibrium effect described by the authors where the positive effect on the weekly pay driven by the raise in hourly earnings is more than offset by the fall in workweek length. Further evidence of this is provided by the authors in the Difference in Difference section of the paper I shall describe below. 
+
+\subsection{Workweek effects of the PRA}\label{s:2.3}
+To document the effect of the workweek limit on the distribution of workweek lengths, they plot the establishment-level density of workweek length's before and after the reform. As the reform took effect in July 1933, a placebo is run with the year 1935 to see if there is seasonality in the shift of the distribution observed before and after the month of July. They take a narrow three-month window around the treatment date (from april to june for the pre-PRA period and from august to october for the post-PRA period). 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{Figures/Distribution.png}
+\end{figure}
+\FloatBarrier
+The above figure show that the distribution of workweek lengths clearly shifts to the left following April 1933 and the density of establishment with a workweek length around the limit rises sharply (higher kurtosis distribution with mode slightly below the cutoff date). As could be expected, I do not observe a similar shift for the 1935 period as the reform was implemented long before this year. I do see the lasting effect of the reform as the shape of the distribution I get post reform is fairly close to the ones observed throughout the year 1935. I shall reutilize this placebo design (using year 1935) as an additional robustness check for the bunching design the authors perform to estimate employment effects. It is worth noting that the authors provide a solid robustness check for this workweek effect analysis as they run a separate analysis with SSNRA data which exhibits the same above-described patterns. 
+
+\subsection{Employment effects of the PRA}\label{s:2.4}
+To estimate employment effets, the authors use a bunching estimator developed by Cengiz \autocite{cengiz2019minimum} which is a common method to estimate the impact of minimum wage \autocite{derenoncourt2021minimum}. Instead of state-level changes in the minimum wage, the author exploit industry level changes to in employment levels to estimate the evolution in the number of jobs tied to the introduction of the workweek limit. Industries are grouped in bins based on how many hours away they are from the limit. The size of this bin is set to 4 and an additional test is performed with a bandwdith of 5 hours. I bring additional credibility to this analysis by testing for a lower bin-size of only 2 hours to further evidence the robustness of those findings to the parameters of the bunching design. 
+The authors also set an upper and lower limit in terms of workweek length for the industries affected by the reform on which the authors provide some sensitivity checks which I extend further for added robustness. In their model, the authors also control for industry-by workweek-bin and industry-by-month fixed effets. 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{Figures/Bunching.png}
+\end{figure}
+\FloatBarrier
+As can be seen in the above figure, there is a sharp rise in employment below the workweek limit which is partially offset by a drop in employment below the workweek limit. This is conform with the employment model predictions for the impact of such a measure. This figure also evidences a gradual adaptation to the reform as the employment gains/losses grow in the first few months that follow the implementation. To ensure those results are not driven by discrepancies in industry density around the cutoff date, they perform the equivalent of a McCrary test for regression discontinuities by showing that industry densities remain fairly consistent before and after treatment. I reinforce the claim that those results are not dependent on industry composition by (i) excluding the sugar refining industry , which exhibits discrepancies around the cutoff date, as acknowledged by the author, and by (ii) using a Jackknife estimator to ensure no single industry is driving the results. 
+
+\subsection{Earnings effects of the PRA}\label{s:2.5}
+To check the claim of the Roosevelt administration that the aggregate purchasing power of Americans increased as a result the PRA, the authors propose a difference in difference estimator to obtain causal estimates of the impact of the reform on log hourly earnings, log weekly earnings and log payroll. The proposed model is as follows : 
+\begin{equation}
+    log(w_{it})=\beta PRA_t \times \text{Pre-PRAWorkweek}_i+Controls_{it}+\epsilon_{it}
+\end{equation}
+The parameter of interest is $\beta$ the coefficient of the interaction term between $PRA_t$ a dummy variable for whether PRA is active and $\text{Pre-PRAWorkweek}_i$ a continuous variable which corresponds to $\frac{\text{nb of months before PRA with workweek > limit}}{\text{nb of months before PRA}}$ for each industry $i$. Controls include industry and months fixed effects. The authors then expand upon this first analysis by computing a variable to group industries based on whether their hourly earnings were below or above the median hourly earnings to control for the effect of the minimum wage. This enables them to run a difference in difference in difference design, the results of which are described below : 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{Figures/DiDiD.png}
+\end{figure}
+\FloatBarrier
+As was discussed in the Taylor Regression section of the paper, they find positive effect on hourly earnings growth but negative effets on weekly earnings growth for firms above the workweek limit prior to the reform compared to firms below. These results are robust to adjustment for the minimum wage and are in fact even sharper as the magnitude of the negative effects on weekly earnings come out to be more pronounced and the positive effects on hourly earnings less significant. The authors assert that this is evidence that the loss in work hours at firms above the limit more than offset the increased gain in hourly earnings. They do also find that the effects on payroll are in conflict with the results of the theoretical model which predicts no differences by industry in the effect of workweek limit on total payroll. \\
+\indent As the authors only provide pretrend analyses for log-hourly earnings, I perform the same analyses for other dependent variable and find potential violations of the parallel trend assumption that may challenge the relevance of the results obtained for the impact of the PRA on payroll and weekly earnings. I do however find that the results presented are robust to variation in the time window considered by the author and propose an alternative estimation of hourly earnings impact using the establishment level CoM data which yield relatively similar conclusion as regards the coefficient of interest. 
+
+\section{Robustness Checks}\label{s:3}
+\indent First and foremost, I would like to commend P.Fishback and its coauthors for the impressive work they performed as well as the great care they put into ensuring the robustness of their results across the whole paper. While I shall attempt to nuance some of the results they present in the below pages, most of what I establish is well in line with their conclusions. \\
+\indent The replication part of this report is structured as follows : I begin, in section 3.1, by assessing the robustness of Taylor regression results to variations in other macroeconomic indicators and introduce multi-way clustering to ensure standard error are not biased downwards due to the presence of industry-specific seasonality patterns.  Then, in section 3.2 I provide further evidence of the robustness of estimated employment effects by proposing additional sensitivity tests as well as performing a placebo analysis using the year 1935 as reference as was performed by Fishback et al. \autocite{fishback2024workweek} for workweek effects. Using a jackknife estimator, I also provide further evidence that the measured effects are not driven by any single industry. Then, in section 3.3 I check the validity of the results on weekly and hourly earnings presented in the paper by introducing variations in the time Window and performing additional pre-trends tests in the form of event study designs, as was done in the paper for log hourly earnings. As earning and payroll responses to the reform appear to exhibit non linear patterns, I also perform a non parametric Stute test as described in Chaisemartin et al. (2024) \autocite{dechaisemartin2022didnountreated} to investigate potential model misspecifications issues. Lastly, in section 3.4, I propose an alternative definition of log hourly earnings by building an approximation from the establishment-level CoM data. I then perform a similar analysis as the one performed at the industry level by the authors and critically review the results. \\
+\indent As regards the code used for this replication : Since the code used by the author to perform their analysis and build the core datasets is fairly long; I only provide, in Appendix, the bits I coded from scratch in R for some of the analyses as well as the stata scripts  that I had to modify heavily. The replication package of the source paper can be found \href{https://www.openicpsr.org/openicpsr/project/191661/version/V1/view}{\textbf{here}}. 
+
+\subsection{Taylor Regression : Macro indicators and Clustering specification}\label{s:3.1}
+In the controls the authors, in keeping with Taylor's \autocite{taylor2011worksharing} original approach; include the log of the monthly national industrial production (IP) index to adjust for potential confounding effects driven by movements in the macroeconomy. An interesting feature of the SSNRA dataset the authors decided to use is that it also include the index of S\&P 500 which they do not control for. This can help capture changes in financing conditions that are not necessarily directly tied to industrial production and may affect labor market conditions. Prior research has for instance identified ties between financial conditions such as financial discounts level and employment \autocite{hall2017high}. I therefore augment the baseline with log(S\&P 500) to test whether the main results are sensitive to macro-financial cycles not fully captured by IP.
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{Figures/Macro.png}
+\end{figure}
+\FloatBarrier
+\indent It comes out that the results vary little in magnitude following the introduction of this additional control. For instance, the effect of the introduction of the PRA , prior to the compliance crisis, on the workweek moves -8.1\% to -8.4\%. A glance at the coefficients for the $S\&P$ variable in relation to labour outcome variable point to a very moderate (if not insignificant) association between stock market performance and most of the labor outcomes considered, especially in comparison to the strong association measured for the IP. Overall, the stability of point estimates and significance levels after adding log(S\&P) supports the interpretation that the original control set (IP, seasonality, and fixed effects) adequately accounts for aggregate conditions, and that the core findings are not artifacts of concurrent stock-market dynamics. \\
+\indent Next I assess  the authors’ clustering choice. The baseline clusters standard errors by industry, which appropriately addresses within-industry serial correlation but can miss month-specific co-movements (sector wide supply chain disruptions, commodity price shocks...) that affect many industries in the same month. If such within-month correlation persists after fixed effects and macro controls, one-way clustering by industry can understate uncertainty. Given that the SSNRA dataset spans many industries (more than in Taylor 2011), it is prudent to guard against this possibility. Thus, I re-run the regression using standard error multiway-clustering using $industry\times month$ to fully account for potential dependence between cells.
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{Figures/multi-way.png}
+\end{figure}
+\FloatBarrier
+The results are stable: coefficients and standard errors are very similar to the baseline. This invariance indicates that residual co-movement across industries within months is limited after conditioning on month fixed effects and macro controls (e.g., IP), and that the paper's conclusions do not hinge on an overly optimistic error structure. 
+
+\subsection{Employment effects : Threshold sensitivity, Placebo test and Industry-dependence}\label{s:3.2}
+I now turn to assessing the robustness of employment effect estimates which are a key result of the paper.
+I assess the robustness of the paper’s core employment estimates along three fronts: sensitivity to treatment-threshold definitions, a placebo exercise, and industry-dependence. As mentioned before the authors do perform a series of test where they change the upper bound and lower bound threshold for inclusion into the group of establishment affected by the treatment (the PRA enactment). They test the results with a broader group than the one considered in the baseline and find comparable results. To further insure the scope of treatment and the bin size selection do not drive the results I get, we perform additional tests by restricting the group more than the baseline one and by considering an smaller bin size ($4\xrightarrow{}2$). This gives us the following results : 
+\begin{figure}[htbp]
+  \centering
+  % Top row
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Figures/regs_bunching_DinD_LB_aroundPRA_C1.pdf}\\
+    \small Higher lower bound $25\xrightarrow{}30$
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Figures/regs_bunching_DinD_UB_aroundPRA_C1.pdf}\\
+    \small Lower upper bound $40\xrightarrow{}30$
+  \end{minipage}
+
+  % Bottom row
+  \vspace{0.8em}
+  \begin{minipage}[t]{0.6\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Figures/regs_bunching_DinD_Bin_aroundPRA_C1.pdf}\\
+    \small Smaller bin size $4\xrightarrow{}2$
+  \end{minipage}
+  \label{fig:threepics-minipage}
+\end{figure}
+\FloatBarrier
+\indent I find results that are comparable to the ones found by the authors, including for the reduced bin size. This is encouraging as it implies the analysis is indeed only weakly sensitive to these three parameters. Besides I see that estimates of employment changes are less conservative when considering a narrower treated group and more so when considering a wider one. This is consistent with the idea that firms that are more remote from the workweek limit are likely less affected by the treatment as described by the authors. \\
+\indent I next conduct a placebo exercise using CoM data for 1935, treating July 1935 as a pseudo cut-off and estimating over a symmetric time window around that date. If the 1933 results were driven by seasonality or compositional patterns unrelated to the policy, I would expect similar pre/post dynamics in 1935.
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.6\textwidth]{Figures/regs_bunching_DinD_aroundPRA_C2.pdf}
+\end{figure}
+\FloatBarrier
+As could be expected I observe no clear pre-trend before the placebo treatment and I do not find back the post treatment evolutions I documented for the year 1933. This is further evidence that the estimated effect are indeed specific to the treatment. \\
+\indent Lastly, for the CoM dataset the authors rely on a narrow set of 8 industries, including sugar-refining. They perform a test to ensure the density of observables on either side of the limit is similar and only identify sugar-refining to be in violation. As they do not exclude it in their analysis I remove it to ensure the integrity of the results. The baseline bunching design weights industries by employment so that estimates reflect aggregate employment shares. While this improves representativeness, it does not reveal whether one or two industries effectively dominate the result. To address this issue I propose an alternate estimation strategy which includes using a Jackknife estimator to strengthen the results from the bunching design. This estimator is based on the Leave-One-Out cross-validation technique that is commonly found in machine learning where I rerun the analysis n-times, each time removing one of the n observations. Then I take an average of the n predictions to get a more reliable estimate. Here, I first determine the top 5 industries\footnote{I introduce this restriction instead of running on all 7 remaining industries to increase computational efficiency and accounting for the fact that the bottom three industries have low employment shares limiting their impact when the regression is weighted by employment which is the case here and in the baseline design} in terms of employment within the selected industries and follow the same principle except that I remove one of the top 5 industries each time. The Jackknife estimates are then given by the following, with $\theta$ the parameter I wish to estimate and i the industry I remove : 
+\begin{equation}
+\begin{aligned}
+    &\hat{\theta}_{jack} = \frac{1}{5}\sum_{i=1}^5\hat{\theta}_{-i} \\
+    &\hat{V}(\hat{\theta}_{jack}) = \frac{5-1}{5}\sum_{i=1}^5(\hat{\theta}_{-i}-\hat{\theta}_{jack})^2
+\end{aligned}
+\end{equation}
+After running the R code provided in appendix, I get the following estimates : 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{Figures/Jackknife.pdf}
+\end{figure}
+\FloatBarrier
+This is close to to the results obtained by the authors for both the pre and post-trends. This indicates that (i) excluding sugar-refining to respect the density assumption does not alter the substantive conclusions, and (ii) no single large industry is responsible for the estimated effects. In short, the employment findings are robust to the composition of industries in the CoM sample. 
+
+\subsection{Wage effects : Time-window sensitivity, Misspecification and Pre-trend validity}\label{s:3.3}
+I now turn to the section pertaining to the effect of the PRA reform on earnings and payroll. To estimate these effect Fishback et al. rely on a DiD design with heterogeneous intensity of treatment. The intensity of the treatment (PRA) depends on whether the pre-PRA workweek of treated (industry) is higher than the workweek limit for more than half of the pre-PRA period. While this pre-PRA period is arbitrarily fixed at 3 months before July, which corresponds to the start of the Roosevelt presidency, it might be that this time window is too restrictive and leads to an overestimation of the effects the authors wish to measure. I perform a sensitivity analysis by making this time-window vary between 2, 4 and 5 weeks around the cutoff date. The results for the DiD and the DiDiD, which adjusts for the minimum wage, under each specification are presented in the tables below : 
+
+\begin{table}[htbp]
+\centering
+\caption{PRA effects across pre-period windows (Post = 2 months fixed) - Not adjusted for minimum wage}
+\label{tab:pra-prewindow-synth}
+\begin{threeparttable}
+\setlength{\tabcolsep}{8pt}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{lccc}
+\hline\hline
+& Pre = 2 months & Pre = 4 months & Pre = 6 months \\
+\hline
+\multicolumn{4}{l}{\textbf{Hourly Earnings}} \\
+PRA (no FE) & 0.089 & 0.078 & 0.070 \\
+ & (0.019) & (0.013) & (0.011) \\
+Pre-PRA Workweek (no FE) & -0.092 & -0.094 & -0.081 \\
+ & (0.027) & (0.031) & (0.031) \\
+PRA $\times$ Pre-PRA Workweek (with FE) & 0.023 & 0.018 & 0.012 \\
+ & (0.009) & (0.009) & (0.008) \\
+Month FE & Yes & Yes & Yes \\
+Industry FE & Yes & Yes & Yes \\
+Observations & 428 & 854 & 1065 \\
+\hline
+\multicolumn{4}{l}{\textbf{Weekly Earnings}} \\
+PRA (no FE) & 0.149 & 0.170 & 0.161 \\
+ & (0.028) & (0.022) & (0.020) \\
+Pre-PRA Workweek (no FE) & 0.070 & 0.080 & 0.088 \\
+ & (0.028) & (0.032) & (0.031) \\
+PRA $\times$ Pre-PRA Workweek (with FE) & -0.048 & -0.051 & -0.053 \\
+ & (0.013) & (0.012) & (0.011) \\
+Month FE & Yes & Yes & Yes \\
+Industry FE & Yes & Yes & Yes \\
+Observations & 460 & 920 & 1150 \\
+\hline
+\multicolumn{4}{l}{\textbf{Payroll}} \\
+PRA (no FE) & 0.389 & 0.412 & 0.387 \\
+ & (0.043) & (0.037) & (0.038) \\
+Pre-PRA Workweek (no FE) & 0.099 & 0.094 & 0.099 \\
+ & (0.026) & (0.032) & (0.032) \\
+PRA $\times$ Pre-PRA Workweek (with FE) & -0.073 & -0.083 & -0.084 \\
+ & (0.019) & (0.020) & (0.020) \\
+Month FE & Yes & Yes & Yes \\
+Industry FE & Yes & Yes & Yes \\
+Observations & 460 & 920 & 1150 \\
+\hline\hline
+\end{tabular}
+\begin{tablenotes}
+\footnotesize
+Notes: Each column reports estimates using symmetric windows around the cutoff with the pre-period set to 2, 4, or 6 months, and post-period fixed at 2 months. Rows labeled “PRA (no FE)” and “Pre-PRA Workweek (no FE)” report coefficients from the specifications without Month and Industry fixed effects as presented in the source tables. Rows labeled “PRA $\times$ Pre-PRA Workweek (with FE)” report the interaction effects as estimated in the specifications with both Month and Industry fixed effects. Standard errors in parentheses.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+\FloatBarrier
+Looking at the coefficient of the interaction term for log hourly earnings and log weekly earnings, we notice that they are significant and bear the same sign as the one they have with the arbitrary 3 month period specification. We also notice that the effect on hourly earnings gets more muted as we widen the time window which is consistent with the authors expectations. Nonetheless it is worth noting that when we consider a narrower time frame (2 months around cutoff) the standard errors are substantially lower but so is the magnitude of the hourly and weekly earnings coefficients. Although the main findings still hold, this could indicate that the results remain relatively sensitive to the time window chosen for the period we consider before the PRA and after the implementation of the PRA. I make similar observations for the DiDiD but report the corresponding results table in appendix as it is fairly long. \\
+\indent As it is a DiD design, the bulk of the robustness checks performed by the authors revolve around checking whether the common trend assumption holds. Great care is put into making sure it holds for log hourly earnings for which Fishback et al. rely both on a visual analysis, by plotting the evolution log hourly earnings, and on an event study design. The principle of the latter is to estimate lead coefficients for log hourly earnings (event-time indicators before the PRA), if they turn out to be approximately zero and jointly insignificant then the parallel trend assumption is satisfied. Nonentheless, the authors do not replicate this approach for the two other dependent variables for which they provide an interpertation. I thus follow a similar methodology to get the pretrend estimation for log weekly earnings and log payroll. I perform both the visual analysis as well as the event study one but only event study results are reported below (for the visual analysis, the figures are provided in appendix)
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.6\textwidth]{Figures/event_study_SSNRA_Log Weekly Earnings.pdf}
+\end{figure}
+\FloatBarrier
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.6\textwidth]{Figures/event_study_SSNRA_Log Payroll.pdf}
+\end{figure}
+\FloatBarrier
+\indent For both of those variables we see a clear increasing pattern prior to the policy implementation date (here represented by the dashed line) which is very different from the relatively constant pre-PRA estimates we get for log-hourly earnings. This is concerning as it means the parallel trend assumption is likely to be violated which makes the authors estimates for weekly earnings and payroll less reliable. Since the pre-trend is increasing (the group with a workweek less often above the limit is rising faster than for the other group) this implies the coefficient are likely to be biased downward. This means the negative coefficient reported by the authors for weekly earning and payroll should be interpreted as an upper bound as the real coefficients are probably closer to 0. The general equilibrium effect might thus be more moderate than what this study describes. \\
+\indent Another potential issue one might encounter in a DiD design with heterogeneous intensity such as the one used in this study is the presence of unaccounted for nonlinearities that may bias estimates. One way to account for potential nonlinearities is to perform a non parametric Stute test. The essence of this test is to check whether $E[Y|D]\equiv m(D)$, with D the treatment intensity variable and Y the outcome variable, is indeed of the form $m(D)=\alpha_0+\alpha_1D$ with $\alpha_0,\alpha_1\in\mathbb{R}$. If $H_0$ is rejected ($m(D)$ is not linear) then its is likely that there are some non linear components in the relation between D and Y. In practice the test is performed by regressing the evolution of the outcome variable on treatment intensity and looking at the p-value. To implement this test faithfully for all three dependent variables, I use its Stata implementation by Clément de Chaisemartin and coauthors \autocite{dechaisemartin2022didnountreated} and thank Professor de Chaisemartin for pointing me to this test. As the stata function does not yet allow clustering options or the addition of controls, I residualize outcomes using the Fixed Effects as controls prior to running the test. 
+The results of the Stute tests are listed below : 
+
+\begin{table}[htbp]
+\centering
+\caption{Panel Stute tests results by dependent variable}
+\label{tab:stute-tests}
+\begin{threeparttable}
+\setlength{\tabcolsep}{7pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{lccccc}
+\hline\hline
+ & $t=1$ & $t=2$ & $t=4$ & $t=5$ & Joint \\
+\hline
+Log Payroll & 0.113 (0.000) & 0.305 (0.000) & 0.051 (0.007) & 0.080 (0.005) & 0.623 (0.0000) \\
+Payroll Index & 0.181 (0.000) & 0.515 (0.000) & 0.092 (0.000) & 0.118 (0.000) & 1.013 (0.0000) \\
+Weekly Earnings & 0.060 (0.000) & 0.144 (0.000) & 0.024 (0.000) & 0.032 (0.000) & 0.286 (0.0000) \\
+\hline\hline
+\end{tabular}
+\begin{tablenotes}
+\footnotesize
+Notes: Entries are Stute test statistics with p-values in parentheses for event-time leads $t \in \{1,2,4,5\}$ and the joint test across those leads. Outcomes are residualized using industry and month fixed effects (\texttt{reghdfe}) before testing. Stute tests are computed with \texttt{stute\_test} using \texttt{order(1)}, \texttt{baseline(4)}, \texttt{brep(1000)}, and \texttt{seed(12)} on $(\tilde{y}_{it}, D_i, i, t)$ where $D_i=\texttt{PRA\_above35\_workweek\_prePRA}$. 
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+\FloatBarrier
+Looking at the p-values for the joint Stute test we find  that they are well below 0.01 which indicates that the test rejects linearity of the conditional mean in intensity. While it does not mean that the current model specifications are fundamentally incorrect, using higher order polynomials or non-parametric estimation methods may be worth looking into to get a better picture of the relation between the enactment of the PRA and these labour market outcomes. 
+
+\subsection{Wage effects : Alternative specification at the Establishment-level}\label{s:3.4}
+As explained before, in this section of the paper the authors opt to rely on the SSNRA dataset as it provides direct measures for hourly earnings unlike the CoM Dataset. To their credit, this approach is undoubtedly more robust and they do a great job of extending their analysis to the National Industrial Conference Board dataset (NICB) which offers a valuable sanity check for the core results they obtain using the SSNRA data. Restricting the analysis to industry level-data, as is the case of the NICB and SSNRA datasets, may however impose restrictions on the external validity of the results and might not necessarily be applicable at the establishment level. To test for the hypothesis I thus opt to build a proxy of hourly earnings at the establishment level using the CoM dataset. This approach naturally presents several limitations : To begin with the industries present in the CoM dataset are much less diverse than in the SSNRA dataset and any direct comparison between the results I get for the evolution of hourly earnings and the ones obtained by the authors must be put into perspective. An additional challenge resides in the assumption I need to make to construct this measure of hourly earnings : I assume that employees have no weeks of and compute the number of imputable work weeks in a given month based on calendar days. While this is a substantial assumption, the absence of real paid leave or sick leave policies in the US prior to the 1940s makes it somewhat reasonable. Hourly wages are then computed as follows\footnote{all measures are given per establishment} : $$\text{hourly wage}_{m,e}= \frac{\text{total wage}_{m,e}}{\text{calendar weeks}_m\times \text{nb of employees}_{m,e}\times \text{workweek}_{m,e}}$$
+Using this measure I then run the same analysis as the one proposed by the authors except that I adjust for establishment fixed effects instead of industry ones and cluster standard errors by establishment (not by industry). The results I obtained are in the table below : 
+
+\begin{table}[htbp]
+\centering
+\caption{Establishment-level DiD results (CoM proxy)}
+\label{tab:com-estab-did}
+\begin{threeparttable}
+\setlength{\tabcolsep}{7pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{lcccc}
+\hline\hline
+ & \multicolumn{2}{c}{Hourly wage} & \multicolumn{2}{c}{Weekly wage} \\
+ & (1) & (2) & (3) & (4) \\
+\hline
+PRA (Aug–Oct 1933)              & -0.385 &         & -0.268 &         \\
+                                & (0.027) &         & (0.019) &         \\
+[0.6em]
+Pre-PRA wage Below Median       & -0.745 &         & -0.663 &         \\
+                                & (0.023) &         & (0.028) &         \\
+[0.6em]
+Pre-PRA Workweek                & -0.159 &         &  0.460 &         \\
+                                & (0.028) &         & (0.036) &         \\
+[0.6em]
+PRA $\times$ Pre-PRA wage Below Median  & 0.235 & 0.227 & 0.151 & 0.146 \\
+                                        & (0.032) & (0.032) & (0.025) & (0.023) \\
+[0.6em]
+PRA $\times$ Pre-PRA Workweek           & 0.238 & 0.231 & -0.088 & -0.097 \\
+                                        & (0.043) & (0.043) & (0.031) & (0.028) \\
+[0.6em]
+Month FE                        & No & Yes & No & Yes \\
+Establishment FE                & No & Yes & No & Yes \\
+\hline
+Observations                    & 23428 & 23367 & 23428 & 23367 \\
+\hline\hline
+\end{tabular}
+\begin{tablenotes}
+\footnotesize
+Notes: Standard errors in parentheses, clustered at the establishment level. Hourly wage is proxied as
+$\text{hourly wage}_{m,e} = \dfrac{\text{total wage}_{m,e}}{\text{calendar weeks}_m \times \text{employees}_{m,e} \times \text{workweek}_{m,e}}$,
+assuming no weeks off. Columns (2) and (4) include month and establishment fixed effects.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+\FloatBarrier
+Interestingly, I find similar patterns to the ones exhibited in the industry-level DiD performed by the authors with a negative effect on weekly wage and a positive one on hourly wages. The positive effect on the hourly wage is however much more substantial. This would suggest that the approach I propose tends to overestimate the positive effect of the reform and tends to underestimate its most negative effects. Nonetheless, the general equilibrium dynamics documented by the author can also be observed under this alternative specification for hourly earnings using the CoM dataset which gives additional credence to the mechanisms described in the paper. 
+
+\section{Discussion}\label{s:4}
+
+
+
+\section{Appendix}\label{s:5}
+
+\subsection{Figures provided in the paper}\label{s:5.1}
+% In preamble:
+% \usepackage{graphicx}
+% \usepackage{caption}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{Figure_paper/Screenshot 2025-11-02 at 10.50.04 PM.png}
+  \label{fig:ss-105004}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{Figure_paper/Screenshot 2025-11-02 at 10.50.22 PM.png}
+  \label{fig:ss-105022}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{Figure_paper/Screenshot 2025-11-02 at 10.50.35 PM.png}
+  \label{fig:ss-105035}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{Figure_paper/Screenshot 2025-11-02 at 10.50.41 PM.png}
+  \label{fig:ss-105041}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{Figure_paper/Screenshot 2025-11-02 at 10.50.47 PM.png}
+  \label{fig:ss-105047}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{Figure_paper/Screenshot 2025-11-02 at 10.51.01 PM.png}
+  \label{fig:ss-105101}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{Figure_paper/Screenshot 2025-11-02 at 10.51.08 PM.png}
+  \label{fig:ss-105108}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{Figure_paper/Screenshot 2025-11-02 at 10.51.14 PM.png}
+  \label{fig:ss-105114}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{Figure_paper/Screenshot 2025-11-02 at 10.51.19 PM.png}
+  \label{fig:ss-105119}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{Figure_paper/Screenshot 2025-11-02 at 10.51.28 PM.png}
+  \label{fig:ss-105128}
+\end{figure}
+
+
+
+\subsection{Code for the replication}\label{s:5.2}
+PS : Do note that the code provided below still depend on the original replication package provided by the authors on the ICPSR website. 
+\subsubsection{Jackknife Estimator}\label{s:5.2.2}
+\begin{lstlisting}[language=R, basicstyle=\ttfamily\small, numbers=left, frame=single, breaklines=true]
+######################## Jackknife estimator ###################################
+
+# - Identifies top-5 industries by employment
+# - Runs Stata do-file 5 times (full + leave-one-out)
+# - Stacks results and creates a summary plot
+
+################################################################################
+
+#install.packages("pacman")
+library(pacman)
+p_load(haven, dplyr, readr, glue, purrr, ggplot2, tidyr, stringr, tibble, fs)
+
+# Load the main dataset
+df_main <- read_dta("/Users/rfernex/Documents/Education/SciencesPo/Courses/M2/S1/Labor/Replication/191661-V1/Data/Generated/establishment_analysis_monthly.dta")
+
+# Restrict to observations included in the baseline
+df_filt <- df_main |> filter(included_industry == 1, valid_imputed_workweek == 1)
+
+# Compute industry totals and pick top-5 by employment size
+top5_tbl <- df_filt |>
+  group_by(industry_code_num) |>
+  summarise(total_emp = sum(ewemt, na.rm = TRUE), .groups = "drop") |>
+  arrange(desc(total_emp)) |>
+  slice_head(n = 5) |>
+  mutate(rank = row_number())
+
+# set output directory
+outdir <- "/Users/rfernex/Documents/Education/SciencesPo/Courses/M2/S1/Labor/Replication/191661-V1/Replication/Bunching/C4_Jackknife"
+
+# Define the function to run the Stata script for the bunching estimator
+stata_bin <- "/Applications/StataNow/StataMP.app/Contents/MacOS/StataMP"
+
+shq <- function(x) sprintf('"%s"', x)
+
+run_LOO <- function(exclind) {
+  outpath <- file.path(outdir, glue("Bunching_monthly_without{exclind}.csv"))
+  upper_bound_tr <- 40
+  lower_bound_tr <- 25
+  bin_size <- 4
+  results_label <- "_jackknife"
+  cmd <- glue('{stata_bin} -q -b do "/Users/rfernex/Documents/Education/SciencesPo/Courses/M2/S1/Labor/Replication/191661-V1/Replication/Bunching/Codes/regs_bunching_jackknife.do" {upper_bound_tr} {lower_bound_tr} {bin_size} "{results_label}" {exclind} "{outpath}"')
+  message("Running: ", cmd)
+  status <- system(cmd)
+  if (status != 0) {
+    stop(glue("Stata run failed for exclind={exclind}. Exit code: {status}"))
+  }
+  return(outpath)
+}
+
+# Computes bunching estimates with each leave one out fold
+excl_vec <- c(as.integer(top5_tbl[[1]]))
+files <- map_chr(excl_vec, run_LOO)
+
+# Stack outputs and write a tidy combined CSV
+read_one <- function(path) {
+  df <- suppressMessages(read_csv(path, show_col_types = FALSE))
+  df$source_file <- path
+  df
+}
+all_runs <- map_dfr(files, read_one)
+
+all_runs_plot <- all_runs
+
+# Builds the x scale and order by date
+year_num <- as.integer(str_extract(all_runs_plot$monthyear, "^[0-9]{4}"))
+mon_num  <- as.integer(str_extract(all_runs_plot$monthyear, "(?<=m)[0-9]{1,2}$"))
+all_runs_plot <- all_runs_plot |>
+    mutate(year_num = year_num, mon_num  = mon_num, ym_order = year_num * 12L + mon_num) |>
+    arrange(ym_order) |>
+    mutate(monthyear = factor(monthyear, levels = unique(monthyear)))
+x_var <- "monthyear"
+
+# Side label
+all_runs_plot <- all_runs_plot |>
+  mutate(side = if_else(bin_above_pra_cutoff == 1, "Above limit", "Below limit"))
+
+# Compute jackknife aggregate across industries (exclude full-sample rows)
+#    - mean of leave-one-out estimates by period and side
+#    - jackknife SE
+jk_agg <- all_runs_plot |>
+  filter(industry_excluded != 0) |>
+  group_by(!!rlang::sym(x_var), side) |>
+  summarise(
+    jk_mean = mean(diff_in_diff_estimator, na.rm = TRUE),
+    m       = sum(!is.na(diff_in_diff_estimator)),
+    ssq     = sum((diff_in_diff_estimator - jk_mean)^2, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  mutate(
+    # classic jackknife variance scaling
+    jk_var = ifelse(m > 1, (m - 1) / m * ssq, NA_real_),
+    jk_se  = sqrt(jk_var),
+    ymin   = jk_mean - 1.96 * jk_se,
+    ymax   = jk_mean + 1.96 * jk_se,
+    ylab   = sprintf("%.3f", jk_mean)
+  )
+
+col_side <- c("Below limit" = "#1f77b4", "Above limit" = "#d62728")
+
+# Builds the graph
+p_jk <- ggplot(jk_agg, aes_string(x = x_var, y = "jk_mean", color = "side")) +
+  geom_errorbar(aes(ymin = ymin, ymax = ymax), width = 0.15, size = 0.6) +
+  geom_point(size = 2.1) +
+  geom_text(
+    aes(label = ylab),
+    nudge_y = 0.02 * max(abs(jk_agg$jk_mean), na.rm = TRUE) + 0.02,
+    size = 3,
+    show.legend = FALSE
+  ) +
+  scale_color_manual(values = col_side, name = "Side of limit") +
+  labs(
+    title = "Aggregate Jackknife estimator with 95% CI",
+    x = "Month",
+    y = "Employment as % of July 1933"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    panel.grid.minor = element_blank(),
+    legend.position = "top",
+    plot.title = element_text(face = "bold")
+  )
+
+# Exports the plot as png
+plot_path <- file.path(outdir, "DinD_points_with_CI_jackknife_aggregate.pdf")
+ggsave(plot_path, p_jk, width = 8.2, height = 5.2)
+print(p_jk)
+message("Saved aggregate jackknife plot: ", plot_path)
+
+png_path <- file.path(outdir, "DinD_points_with_CI_jackknife_aggregate.png")
+ggsave(png_path, p_jk, width = 8.2, height = 5.2, dpi = 200)
+message("Saved PNG preview: ", png_path)
+\end{lstlisting}
+
+\begin{lstlisting}[language=Stata, basicstyle=\ttfamily\footnotesize, numbers=left, frame=lines, breaklines=true, tabsize=2]
+//Bunching estimator to estimate effects of PRA on employment
+
+cd "/Users/rfernex/Documents/Education/SciencesPo/Courses/M2/S1/Labor/Replication/191661-V1"
+
+//Arguments: results_label labels the particular set of results
+args upper_bound_tr lower_bound_tr bin_size results_label exclind outpath
+
+macro dir _all
+
+//Set default values for arguments
+if "`upper_bound_tr'" == ""{
+	local upper_bound_tr =  40 	//Hours above workweek limit 
+}
+if "`lower_bound_tr'" == ""{ 
+	local lower_bound_tr =  25	//Hours below workweek limit	
+}
+if "`bin_size'" == ""{
+	local bin_size =  4			//Workweek bin size 
+}
+
+//Label months
+label define month_labels 1 "1933m1"  2 "1933m2"  3 "1933m3"  4 "1933m4"  5 "1933m5"  6 "1933m6" ///
+7 "1933m7"  8 "1933m8"  9 "1933m9"  10 "1933m10"  11 "1933m11"  12 "1933m12"  ///
+13 "1935m1"  14 "1935m2"  15 "1935m3"  16 "1935m4"  17 "1935m5"  18 "1935m6" ///
+19 "1935m7"  20 "1935m8"  21 "1935m9"  22 "1935m10"  23 "1935m11"  24 "1935m12", replace
+
+//Set months to include as "around" the PRA including pre- and post-
+local treatment_months_1933 "1 2 3 4 5 6 7 8 9 10 11 12"
+local treatment_months_1935 "1 2 3 4 5 6 7 8 9 10 11 12"
+
+//Include all data from 1933 & 1935
+use "Data/Generated/establishment_analysis_monthly.dta" if included_industry == 1 & valid_imputed_workweek == 1 & (year == 1933 | year == 1935) & !inlist(industry_code_num, 131, `exclind'), clear
+
+//Month-year variable
+egen monthyear = group(year month)
+label values monthyear month_labels
+
+//Treatment months
+local treatment_months = "`treatment_months_1933'"	
+foreach m in `treatment_months_1935'{
+    local monthyear_to_add = `m' + 12
+	local treatment_months = "`treatment_months' `monthyear_to_add'"
+}
+local treatment_months_str: subinstr local treatment_months " " ",", all
+
+//Generate workweek bins & treatment indicator
+gen l_b = floor( (imputed_workweek - workweek_limit) / `bin_size')
+gen bin_above_pra_cutoff = l_b >= 0
+gen tr = inlist(monthyear, `treatment_months_str') == 1 &  l_b*`bin_size'  > - `lower_bound_tr' & l_b*`bin_size' <= `upper_bound_tr'
+
+//Shift l_b so minimum is 0 for processing coefficients laters 
+qui sum l_b
+local min_l_b = -`r(min)'
+replace l_b = l_b + `min_l_b'
+
+//Define bounds for for loop to build effect above and below the limit
+local lower_bound_sc = `min_l_b' - max(floor(`lower_bound_tr'/`bin_size'), `min_l_b') 
+local upper_bound_sc = `min_l_b' + min(floor(`upper_bound_tr'/`bin_size'), `r(max)')
+
+//Calculate averages weighted by employment
+gen ewemt_wgt = round(ewemt)
+replace ewemt = 1
+collapse (sum) ewemt (first) tr bin_above_pra_cutoff month year [fw = ewemt_wgt], by(monthyear industry_code_num l_b)
+
+//Express effects as % of employment in basemonth
+gen basemonth = 1 if month == 7 & year == 1933 //Use July 1933 value
+bysort industry_code_num basemonth month year: egen ewemt_sum = sum(ewemt) if basemonth ~= .
+carryforward ewemt_sum, replace
+gen ewemt_normalized = ewemt / ewemt_sum
+
+//Regress normalized employment on month-year x workweek x treatment + treatment + FEs at industry-month level
+qui reghdfe ewemt_normalized i.monthyear#i.l_b#c.tr tr, vce(cluster industry_code_num) absorb(l_b##industry_code_num monthyear##industry_code_num) 
+
+preserve
+	//Generate Cengiz et al. "Fig. 2"
+	regsave
+	//Extract coefficients
+	split var, gen(type) parse("#")
+	drop if coef==0 | var == "_cons"
+	rename type1 monthyear
+	replace monthyear = subinstr(monthyear, "1b", "1", .)
+	destring monthyear, replace ignore(".monthyear")
+	rename type2 hourbin
+	destring hourbin, replace ignore(".l_b")
+	replace hourbin = hourbin - `min_l_b'
+	drop type3
+	//Total effect over all months by hourwin
+	collapse (sum) coef, by(hourbin)
+	qui sum hourbin
+	local min = `bin_size'* `r(min)'
+	local max = `bin_size'*`r(max)'
+	gen id = 1
+	replace hourbin = hourbin*`bin_size' - 1 //hourbin in units of hours
+	bysort id (hourbin): gen sum_coef = sum(coef * (coef != coef[_n-1])) //running total of coeffs
+restore
+
+//Delta method calculation of standard errors for total effects above and below the workweek limit
+gen diff_in_diff_estimator = .
+gen se = .
+forvalues type =0(1)1{
+	local DinD_`type' = "0"
+}
+foreach month in `treatment_months'{
+	forvalues type =0(1)1{
+		local DinD_`type'_`month' = "0"
+	}
+ 	forvalues hour = `lower_bound_sc'(1)`upper_bound_sc'{
+		if `hour' > `min_l_b'{
+			local type = 1
+		}
+		else{
+			local type = 0
+		}			
+		local DinD_`type'_`month' ="`DinD_`type'_`month''+`month'.monthyear#`hour'.l_b#c.tr" 	
+		if `month' == 7{ //Set July 1933 coeffs. to 0
+ 			local DinD_`type' = "`DinD_`type'' + `month'.monthyear#`hour'.l_b#c.tr"
+		}
+	}
+}
+
+//Test DinD coefficients
+forvalues type =0(1)1{
+	foreach month in `treatment_months'{	
+		local DinD_`type'_`month' = "`DinD_`type'_`month'' - (`DinD_`type'')"
+		qui lincom `DinD_`type'_`month''
+ 		replace se = 100*`r(se)' if monthyear == `month' & bin_above_pra_cutoff == `type'
+ 		replace diff_in_diff_estimator = 100* `r(estimate)' if monthyear == `month' & bin_above_pra_cutoff == `type'
+	}
+}
+
+//Plot out DinD estimates for `treatment_months'
+keep if inlist(monthyear, `treatment_months_str')
+collapse (first) se diff_in_diff_estimator month year, by( monthyear bin_above_pra_cutoff )
+
+gen plot_diff_in_diff_estimator = diff_in_diff_estimator
+format plot_diff_in_diff_estimator %9.3f
+gen high_se = diff_in_diff_estimator + 2 * se
+gen low_se = diff_in_diff_estimator - 2 * se
+gen industry_excluded = `exclind'
+
+//Plot coeffs around the PRA 
+keep if year == 1933 & (month>=4 & month<=10)
+//Fig. 6 and Appendix Figs. 8, 9, and 10
+twoway (scatter diff_in_diff_estimator monthyear if bin_above_pra_cutoff == 1, mlabel(plot_diff_in_diff_estimator) mlabsize(tiny) mlabp(4) xlabel(4(1)10)) (scatter diff_in_diff_estimator monthyear if  bin_above_pra_cutoff == 0, mlabel(plot_diff_in_diff_estimator) mlabsize(tiny) mlabp(4) xlabel(4(1)10)) (rcap high_se low_se monthyear),  xtitle("Month") ytitle("Employment as % of July 1933") legend(order(1 "Above Workweek Limit" 2 "Below Workweek Limit") position(6) rows(1))  xline(7.5)
+graph export "Replication/Bunching/C4_Jackknife/regs_bunching_DinD`results_label'_aroundPRA_C4_`exclind'.pdf", as(pdf) replace
+
+export delimited using "`outpath'", replace
+\end{lstlisting}
+
+
+
+\subsubsection{Stute Tests}\label{s:5.2.2}
+
+\begin{lstlisting}[language=Stata, basicstyle=\ttfamily\footnotesize, numbers=left, frame=lines, breaklines=true, tabsize=2]
+cd  "/Users/rfernex/Documents/Education/SciencesPo/Courses/M2/S1/Labor/Replication/191661-V1"
+
+//Regressions for effects of PRA using D-in-D spec with preexisting workweek variation
+
+local type_data = "_SSNRA"
+
+local l_payroll = "l_payroll l_payroll_ind"
+
+//options for outputting table and specifications
+local estab_opts = `"nonotes se tex b(%12.3f) replace label varwidth(40) obslast nocon nomtitles nostar"' //star(* 0.1 ** 0.05 *** 0.01)"' [remove stars for AEA]
+local cluster_var industry
+
+use "Data/Generated/industry`type_data'_analysis_monthly.dta" if year == 1933 & month>=4 & month<=10, clear
+
+//Drop sugar beets with large seasonal pattern
+drop if tableno == "9"
+label var l_payroll_ind "Payroll"
+
+preserve
+keep if year == 1933 & inrange(month, 4, 10)
+drop if month == 7
+
+// 2) Define panel identifiers (group/time) and baseline
+* G: industry_id ; T: month
+* D is the intensity of the treatment defined as a continuous interaction variable :  dummy for if PRA was in effect for an industry * nb of hours above PRA limit for this industry
+
+cap drop treat_intensity
+gen double treat_intensity = PRA_above35_workweek_prePRA
+label var treat_intensity  "PRA $\times$ Pre-PRA Workweek"
+
+* Install stute_test if needed
+capture which stute_test
+if _rc {
+    net install stute_test, from("https://raw.githubusercontent.com/chaisemartinPackages/stute_test/main/Stata/dist/git") replace
+}
+
+* 2) Residualize outcomes to fit the baseline DiD design (absorbs fixed effects)
+
+// Absorb FEs
+foreach y in l_weekly_earn l_payroll l_payroll_ind {
+    cap drop r_`y'
+    quietly reghdfe `y', absorb(month industry_id) resid
+    predict double r_`y', resid
+}
+
+* 3) Balancing checks to ensure panel Stute test can be run safely
+
+xtset industry_id month
+
+* 4) Run Stute tests for each SSNRA outcome on the panel with G and T
+* Choose main intensity: absolute distance
+local D_var treat_intensity
+local breps 1000
+local seedv 12
+local ord 1
+local T0 4
+
+* Weekly earnings
+stute_test r_l_weekly_earn `D_var' industry_id month, ///
+    order(`ord') brep(`breps') seed(`seedv') ///
+    baseline(`T0')
+
+* Payroll (log)
+stute_test r_l_payroll `D_var' industry_id month, ///
+    order(`ord') brep(`breps') seed(`seedv') ///
+    baseline(`T0')
+
+* Payroll (SSNRA indexed)
+stute_test r_l_payroll_ind `D_var' industry_id month, ///
+    order(`ord') brep(`breps') seed(`seedv') ///
+    baseline(`T0')
+*stute_export, suffix(payroll_ind) outcome(l_payroll_ind)
+
+local outtex "Replication/DiD/C2_Stute_Test/stute_all.tex"
+cap file close __fh
+file open __fh using "`outtex'", write replace
+file write __fh "{\n"
+file write __fh "\begin{tabular}{lrrrrrr}\n"
+file write __fh "\hline\n"
+file write __fh "Outcome & Coef & SE & z & p & CI Low & CI High \\\\ \hline\n"
+file write __fh "l_hourly_earn & " %9.3f Th[1,1] " & " %9.3f Th[2,1] " & " %9.3f Th[3,1] " & " %9.3f Th[4,1] " & " %9.3f Th[5,1] " & " %9.3f Th[6,1] " \\\\ \n"
+file write __fh "l_weekly_earn & " %9.3f Tw[1,1] " & " %9.3f Tw[2,1] " & " %9.3f Tw[3,1] " & " %9.3f Tw[4,1] " & " %9.3f Tw[5,1] " & " %9.3f Tw[6,1] " \\\\ \n"
+file write __fh "l_payroll & "      %9.3f Tp[1,1] " & " %9.3f Tp[2,1] " & " %9.3f Tp[3,1] " & " %9.3f Tp[4,1] " & " %9.3f Tp[5,1] " & " %9.3f Tp[6,1] " \\\\ \n"
+file write __fh "l_payroll_ind & "  %9.3f Tpi[1,1] " & " %9.3f Tpi[2,1] " & " %9.3f Tpi[3,1] " & " %9.3f Tpi[4,1] " & " %9.3f Tpi[5,1] " & " %9.3f Tpi[6,1] " \\\\ \n"
+file write __fh "\hline\n"
+file write __fh "\end{tabular}\n"
+file write __fh "}\n"
+file close __fh
+\end{lstlisting}
+
+\subsubsection{CoM hourly wage - DiD}\label{s:5.2.1}
+
+\begin{lstlisting}[language=R, basicstyle=\ttfamily\footnotesize, numbers=left, numberstyle=\tiny, frame=lines, breaklines=true, tabsize=2]
+############################# Build COM DiD dataset  ##############################
+
+install.packages("pacman")
+library(pacman)
+p_load(haven, dplyr, lubridate, readr)
+
+estab_df <- read_dta("/Users/rfernex/Documents/Education/SciencesPo/Courses/M2/S1/Labor/Replication/191661-V1/Data/Generated/establishment_analysis_monthly.dta")
+outfile <- "/Users/rfernex/Documents/Education/SciencesPo/Courses/M2/S1/Labor/Replication/191661-V1/Replication/DiD/C4_CoM_Alt/Data/"
+
+# Construct calendar weeks for 1933 (we assume away time off) and hourly wage
+estab_df <- estab_df %>%
+  mutate(
+    month = as.integer(month),
+    weeks_in_month_cal = ifelse(
+      year == 1933 & month >= 1 & month <= 12,
+      c(31,28,31,30,31,30,31,31,30,31,30,31)[month] / 7, 4.33),
+    yearly_hours = as.numeric(ewemt) * as.numeric(weeks_in_month_cal) * as.numeric(imputed_workweek),
+    hourly_wage = ifelse(!is.na(e005s) & !is.na(yearly_hours) & yearly_hours > 0, as.numeric(e005s) / yearly_hours, NA),
+    l_hourly_wage = ifelse(!is.na(hourly_wage) & hourly_wage > 0, log(hourly_wage), NA),
+    weekly_wage = hourly_wage * imputed_workweek,
+    l_weekly_wage = ifelse(!is.na(weekly_wage) & weekly_wage > 0, log(weekly_wage), NA),
+    l_ewemt = ifelse(!is.na(ewemt) & ewemt > 0, log(ewemt), NA),
+    l_workweek = ifelse(!is.na(imputed_workweek) & imputed_workweek > 0, log(imputed_workweek), NA)
+  )
+
+# Build necessary variables and apply filters
+
+# - Workweek pre PRA variable (used to compute treatment intensity)
+prepra_above_share <- estab_df %>%
+  filter(year == 1933, month >= 4, month < 7) %>%
+  transmute(
+    establishment_ID,
+    above_ind = as.integer(as.numeric(imputed_workweek) > as.numeric(workweek_limit))
+  ) %>%
+  group_by(establishment_ID) %>%
+  summarise(prePRA_above = sum(above_ind, na.rm = TRUE) / 3, .groups = "drop")
+
+# - Wage pre PRA variable (compared to median to control for minimum wage effect)
+pre_est <- estab_df %>%
+  filter(year == 1933, month %in% c(4,5,6), !is.na(hourly_wage), hourly_wage > 0) %>%
+  group_by(establishment_ID) %>%
+  summarise(hourly_wage_prePRA = mean(hourly_wage, na.rm = TRUE), .groups = "drop")
+
+med_hourly_wage_prePRA <- median(pre_est$hourly_wage_prePRA, na.rm = TRUE)
+
+pre_est <- pre_est %>%
+  mutate(
+    aboveM_hourly_wage_prePRA = hourly_wage_prePRA > med_hourly_wage_prePRA,
+    belowM_hourly_wage_prePRA = hourly_wage_prePRA < med_hourly_wage_prePRA
+  )
+
+# - Merge with main dataset
+estab_1933 <- estab_df %>%
+  filter(year == 1933, included_industry == 1, valid_imputed_workweek == 1,
+         !is.na(l_hourly_wage), month >= 4, month <= 10, industry_code_num %in% c(118,119,216,1110,1112,1408)) %>%
+         left_join(prepra_above_share, by = "establishment_ID") %>%
+         left_join(pre_est, by = "establishment_ID") %>%
+         mutate(PRA_prePRA_above = as.numeric(PRA_period) * prePRA_above,
+                PRA_aboveM_hourly_wage_prePRA = as.numeric(PRA_period) * aboveM_hourly_wage_prePRA,
+                PRA_belowM_hourly_wage_prePRA = as.numeric(PRA_period) * belowM_hourly_wage_prePRA)
+
+# Select and export for Stata
+
+# Build dataset
+Establishment_DiD <- estab_1933 %>%
+  mutate(weight_emp = as.numeric(ewemt)) %>%
+  select(establishment_ID, year, month, industry_code_num, e005s, ewemt, l_ewemt,
+    imputed_workweek, weeks_in_month_cal, l_workweek, workweek_limit, yearly_hours, hourly_wage,
+    l_hourly_wage, weekly_wage, l_weekly_wage, PRA_period, prePRA_above, PRA_prePRA_above,
+    aboveM_hourly_wage_prePRA, belowM_hourly_wage_prePRA, PRA_aboveM_hourly_wage_prePRA,
+    PRA_belowM_hourly_wage_prePRA)
+
+write_dta(Establishment_DiD, paste(outfile,"establishment_1933_hourly_dataset.dta",sep = ""),version = 14)
+\end{lstlisting}
+
+\begin{lstlisting}[language=Stata, basicstyle=\ttfamily\footnotesize, numbers=left, frame=lines, breaklines=true, tabsize=2]
+cd "/Users/rfernex/Documents/Education/SciencesPo/Courses/M2/S1/Labor/Replication/191661-V1"
+
+* Employment file
+use "Replication/DiD/C4_CoM_Alt/Data/establishment_1933_hourly_dataset.dta"
+
+//Regressions for effects of PRA using D-in-D spec with preexisting workweek variation
+
+//options for outputting table and specifications
+local estab_opts = `"nonotes se tex b(%12.3f) replace label varwidth(40) obslast nocon nomtitles nostar"' //star(* 0.1 ** 0.05 *** 0.01)"' [remove stars for AEA]
+local cluster_var establishment_ID //cluster SE variables.
+local indexed_ewemt_models "m_l_hourly_wage_noFE m_l_hourly_wage_FE m_l_weekly_wage_noFE m_l_weekly_wage_FE "
+
+//Relabel variables for outputting to tables
+label var l_hourly_wage "Hourly wage"
+label var l_weekly_wage "Weekly wage"
+label var l_ewemt "Employment"
+label var l_workweek "Workweek"
+label var prePRA_above "Pre-PRA Workweek"
+local var_label : variable label prePRA_above
+label var PRA_prePRA_above "PRA $\times$ `var_label'"
+label var belowM_hourly_wage_prePRA "Pre-PRA wage Below Median"
+foreach var_to_rename in prePRA_above belowM_hourly_wage_prePRA{
+	local var_label: variable label `var_to_rename'
+	label var PRA_`var_to_rename' "PRA $\times$ `var_label'"
+}
+
+//Pre-trends analysis
+gen above = round(prePRA_above) //Round fraction of months above to 0 or 1
+local lab_figure1 = "Workweek Above Limit > 50%"
+local lab_figure2 = "Workweek Above Limit < 50%"
+
+//Fig. 7
+twoway (lpoly l_hourly_wage month if above == 1, lwidth(thick)) (lpoly l_hourly_wage month if above == 0, lwidth(thick)), legend(order(1 "`lab_figure1'" 2 "`lab_figure2'") position(6) rows(1)) ytitle("Log Hourly Wage") xlabel(4(1)10) xline(7.5) xtitle("Month")
+graph export "Replication/DiD/C4_CoM_Alt/Output/regs_DinD_PRA_CoM_pretrends_prePRA_above.pdf", replace
+
+drop if month == 7 //Exclude July, month of PRA, for regressions
+
+//DinD Spec for wage Vars Using Preexisting variation in Workweek by Establishment
+eststo clear
+local label = ""
+local pattern = ""
+foreach var_to_reg in l_hourly_wage l_weekly_wage {
+	//Specifications 1: Just DinD (weighted by employment)
+	qui eststo m_`var_to_reg'_noFE: reg `var_to_reg' PRA_period PRA_prePRA_above prePRA_above [aw=ewemt], vce(cluster `cluster_var')
+	//Spec 2: Add month + industry FEs (weighted by employment)
+	qui eststo m_`var_to_reg'_FE: reghdfe `var_to_reg' PRA_prePRA_above [aw=ewemt], absorb(month establishment_ID) vce(cluster `cluster_var')
+	local lab_var: variable label `var_to_reg'
+	local label = `"`label' "`lab_var'""'
+	local pattern = "`pattern' 1 0"
+}
+estfe . m_*, labels(month "Month" establishment_ID "Establishment")
+
+//Table 2 and Appendix Tables 8, 9, and 10
+esttab `indexed_ewemt_models' using "Replication/DiD/C4_CoM_Alt/Output/regs_DinD_PRA_industry_CoM_prePRA_above_wage", `estab_opts' indicate(`r(indicate_fe)') mgroups(`label', pattern(`pattern') prefix(\multicolumn{@span}{c}{) suffix(}) span) keep( PRA_prePRA_above PRA_period prePRA_above) order(PRA_period prePRA_above PRA_prePRA_above )
+
+//DinDinD Spec for wage Vars Using Preexisting variation in Workweek by Establishment & Below Median Pre-PRA wage
+eststo clear
+local label = ""
+local pattern = ""
+foreach var_to_reg in l_hourly_wage l_weekly_wage { //Just for hourly wageings
+	//Specifications 1: Just DinD
+	 eststo m_`var_to_reg'_noFE: reg `var_to_reg' PRA_period belowM_hourly_wage_prePRA prePRA_above PRA_belowM_hourly_wage_prePRA PRA_prePRA_above [aw=ewemt] , vce(cluster `cluster_var')
+	//Spec 3: Add industry + month FEs
+	 eststo m_`var_to_reg'_FE: reghdfe `var_to_reg' PRA_belowM_hourly_wage_prePRA PRA_prePRA_above [aw=ewemt], absorb(month establishment_ID) vce(cluster `cluster_var')
+	local lab_var: variable label `var_to_reg'
+	local label = `"`label' "`lab_var'""'
+	local pattern = "`pattern' 1 0 "
+}
+estfe . m_*, labels(month "Month" establishment_ID "Establishment")
+//Table 3
+esttab `indexed_ewemt_models' using "Replication/DiD/C4_CoM_Alt/Output/regs_DinDinD_PRA_industry_CoM_prePRA_above_wageB", `estab_opts' indicate(`r(indicate_fe)') mgroups(`label', pattern(`pattern') prefix(\multicolumn{@span}{c}{) suffix(}) span) keep( PRA_period belowM_hourly_wage_prePRA prePRA_above PRA_belowM_hourly_wage_prePRA PRA_prePRA_above  ) order(PRA_period belowM_hourly_wage_prePRA prePRA_above PRA_belowM_hourly_wage_prePRA PRA_prePRA_above  )
+\end{lstlisting}
+
+\subsubsection{Event study}\label{s:5.2.4}
+\begin{lstlisting}[language=Stata, basicstyle=\ttfamily\footnotesize, numbers=left, frame=lines, breaklines=true, tabsize=2]
+
+cd "/Users/rfernex/Documents/Education/SciencesPo/Courses/M2/S1/Labor/Replication/191661-V1"
+
+//Event study analysis for effects of PRA
+
+args type_data prePRA_variable Dependent
+
+if "`type_data'" == ""{ //default is SSNRA
+	local type_data = "_SSNRA"
+}
+
+//Pre-PRA workweek variable to use: l_workweek_prePRA, above*_workweek_prePRA
+if "`prePRA_variable'"==""{ //Default is fraction of months above limit
+	local prePRA_variable = "above35_workweek_prePRA" 
+}
+
+//weekly earn only available in SSNRA data
+if "`type_data'" == "_SSNRA"{
+	local weekly_earn = "l_weekly_earn l_payroll"
+}
+
+//options for outputting table and specifications
+local cluster_var industry //cluster SE variables.
+
+use "Data/Generated/industry`type_data'_analysis_monthly.dta", clear //Drop June 1933
+
+if "`Dependent'"==""{ //Default is fraction of months above limit
+	local Dependent = "l_hourly_earn" 
+}
+
+//Label pre-PRA variable
+local var_label = "Pre-PRA Workweek"
+if "`prePRA_variable'" == "l_workweek_prePRA"{
+	local var_label = "Pre-PRA Workweek Length"
+}
+
+//Redefine industry ID for NICB data
+if "`type_data'" == "_NICB"{
+	drop industry_id
+	egen industry_id = group(industry)
+}
+
+//Create group variable for month-by-year
+sort year month
+egen month_year = group(year month)
+
+if "`Dependent'" == "l_hourly_earn"  local ytitle_str = "Log Hourly Earnings"
+if "`Dependent'" == "l_weekly_earn"  local ytitle_str = "Log Weekly Earnings"
+if "`Dependent'" == "l_payroll_ind"  local ytitle_str = "Payroll (Index)"
+if "`Dependent'" == "l_payroll"      local ytitle_str = "Log Payroll"
+
+qui eststo: reghdfe `Dependent' ib7.month_year#c.`prePRA_variable', absorb(industry_id) vce(cluster `cluster_var')
+regsave
+gen plot_these = regexm(var, ".month_year#c.`prePRA_variable'")
+replace var = subinstr(var, ".month_year#c.`prePRA_variable'", "", .)
+destring var, replace force
+gen year = 1933+(var-1)/12
+gen high_se = coef + 2 * stderr
+gen low_se = coef - 2 * stderr
+//Appendix Fig. 11
+twoway (scatter coef year if plot_these == 1) (rcap high_se low_se year if plot_these == 1),  xtitle("Year") ytitle("Month by `var_label' Effects on `ytitle_str'") xlabel(1933(1)1936) xline(1933.6 1935.625) legend(off)
+
+graph export "Replication/Event_Study/C1_Dependent/event_study`type_data'_`ytitle_str'.pdf", as(pdf) replace 
+\end{lstlisting}
+
+\printbibliography
+
+
+\end{document}

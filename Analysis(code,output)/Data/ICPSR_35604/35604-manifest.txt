@@ -1,0 +1,55 @@
+File Manifest for ICPSR 35604
+
+Raff, Daniel M. G., Timothy F. Bresnahan, Changkeun Lee, and Margaret
+Levenstein. United States Census of Manufactures, Motor Vehicle Industry,
+1929-1935. ICPSR35604-v1. Ann Arbor, MI: Inter-university Consortium for
+Political and Social Research [distributor], 2015-05-22.
+http://doi.org/10.3886/ICPSR35604.v1
+
+
+Study-level Documentation
+
+    Filename                            Record  Record    Var.    Date        MD5
+                                        Length  Count     Count   Updated     Checksum
+
+    35604-descriptioncitation.pdf       -       -         -       2019-02-05  -
+
+    35604-related_literature.txt        -       -         -       daily       -
+
+    35604-manifest.txt                  -       -         -       daily       -
+
+
+DS0001 United States Census of Manufactures, Motor Vehicle Industry, 1929-
+1935
+
+    Filename                            Record  Record    Var.    Date        MD5
+                                        Length  Count     Count   Updated     Checksum
+
+    35604-0001-Codebook.pdf             -       -         -       2015-05-22  3689cc4881eba4a0c6bade4863756fe5
+
+    35604-0001-Data.dta                 -       668       329     2015-05-22  ae783f61efb3666d284b8a19a12d765a
+
+    35604-0001-Data.rda                 -       668       329     2015-05-22  41f2446803b07a1b033cfbda46a0c7de
+
+    35604-0001-Data.sav                 -       668       329     2015-05-22  ebdacbae4a94c1fd5a6cc58a75cd8c54
+
+    35604-0001-Data.stc                 -       668       329     2015-05-22  af6e9e0f3ed3378e05f39b0e09ca11d3
+
+    35604-0001-Data.tsv                 -       668       329     2015-05-22  65e6bc2f8ab143643ea9099619b47d51
+
+    35604-0001-Data.txt                 2771    668       329     2015-05-22  5b78bbc35513376ee933824ff0f78266
+
+    35604-0001-Questionnaire.pdf        -       -         -       2015-05-22  77e402934e6a9765e9bb67b50bcbb29f
+
+    35604-0001-Setup.dct                -       -         -       2015-05-22  c28c8378355b3ab7c020a4a393189256
+
+    35604-0001-Setup.do                 -       -         -       2015-05-22  970230bc16296d06ac7458c8e45997b9
+
+    35604-0001-Setup.sas                -       -         -       2015-05-22  567f46e28ac3e2dd77155b9c7dfb5f4f
+
+    35604-0001-Setup.sps                -       -         -       2015-05-22  5a122f029bb8dcf839a7613592b85943
+
+    35604-0001-Supplemental_syntax.do   -       -         -       2015-05-22  ca03a9a9d38e69655f217fa67589cc00
+
+    35604-0001-Supplemental_syntax.sas  -       -         -       2015-05-22  a8350a6f65fb5d5e0cb0e5ecfe8e2821
+

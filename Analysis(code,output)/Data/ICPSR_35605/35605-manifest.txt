@@ -1,0 +1,59 @@
+File Manifest for ICPSR 35605
+
+Raff, Daniel M. G., Timothy F. Bresnahan, Changkeun Lee, and Margaret
+Levenstein. United States Census of Manufactures, Cotton Goods Industry,
+1929-1935. ICPSR35605-v2. Ann Arbor, MI: Inter-university Consortium for
+Political and Social Research [distributor], 2015-05-22.
+http://doi.org/10.3886/ICPSR35605.v2
+
+Details on the version history can be found below the file listings.
+
+
+Study-level Documentation
+
+    Filename                            Record  Record    Var.    Date        MD5
+                                        Length  Count     Count   Updated     Checksum
+
+    35605-descriptioncitation.pdf       -       -         -       2019-02-05  -
+
+    35605-manifest.txt                  -       -         -       daily       -
+
+
+DS0001 United States Census of Manufactures, Cotton Goods Industry, 1929-
+1935
+
+    Filename                            Record  Record    Var.    Date        MD5
+                                        Length  Count     Count   Updated     Checksum
+
+    35605-0001-Codebook.pdf             -       -         -       2015-05-22  53fd67864452a0286f7a293a167c1ae7
+
+    35605-0001-Data.dta                 -       4,484     190     2015-05-14  a6367a8df148abcb7a5a4e88437aaeb2
+
+    35605-0001-Data.rda                 -       4,484     190     2015-05-14  91e8f1c5aa54f51880616b33e1999dd7
+
+    35605-0001-Data.sav                 -       4,484     190     2015-05-14  581ae29386588b0bd86115df31ffe5eb
+
+    35605-0001-Data.stc                 -       4,484     190     2015-05-14  1a7bbb783a15cd3866e6c68038a7bcd3
+
+    35605-0001-Data.tsv                 -       4,484     190     2015-05-14  61fa171d862b60295519dbaa18f74642
+
+    35605-0001-Data.txt                 2325    4,484     190     2015-05-14  42923da39c5092b45ae88dc7c0cae276
+
+    35605-0001-Questionnaire.pdf        -       -         -       2015-05-14  950d140023785769796402e6e96f493f
+
+    35605-0001-Setup.dct                -       -         -       2015-05-14  48a90375a5ac2bcc31ba625888939f0c
+
+    35605-0001-Setup.do                 -       -         -       2015-05-14  fa7b18d4e5be42db95a8f3a95189f035
+
+    35605-0001-Setup.sas                -       -         -       2015-05-14  a4f767e0d1084d25c55a8165fa632f95
+
+    35605-0001-Setup.sps                -       -         -       2015-05-14  c1f8f6c0119f7c9f56796a12bc039c8b
+
+    35605-0001-Supplemental_syntax.do   -       -         -       2015-05-14  a7a2bcd0fa8738d1abd1caf32a240bf2
+
+    35605-0001-Supplemental_syntax.sas  -       -         -       2015-05-14  ccab38ed33df12923075653cc033790d
+
+
+Version History
+
+2015-05-22 ICPSR Codebook updated.
